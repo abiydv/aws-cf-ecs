@@ -41,15 +41,15 @@ Parameters:
   HighCPUThreshold:
     Type: Number
     Default: 80
-  
+
   LowCPUThreshold:
     Type: Number
     Default: 20
-  
+
   MaxContainers:
     Type: Number
     Default: 4
-    
+
   MinContainers:
     Type: Number
     Default: 1
@@ -127,7 +127,7 @@ Resources:
               awslogs-group: !Join [ "", ["/ecs/", !Ref environment, "-app" ]]
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: "ecs"
-  
+
   Service:
     Type: AWS::ECS::Service
     DependsOn: LoadBalancerListener
@@ -143,7 +143,7 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
-          SecurityGroups: 
+          SecurityGroups:
             - !Ref ECSSecurityGroup
           Subnets:
             - Fn::ImportValue: !Join [':', [!Ref 'StackName', 'PrivateSubnet1']]
@@ -169,7 +169,7 @@ Resources:
           IpProtocol: "-1"
           FromPort: 0
           ToPort: 0
-      VpcId: 
+      VpcId:
         Fn::ImportValue:
           !Join [':', [!Ref 'StackName', 'VPC']]
 
@@ -188,7 +188,7 @@ Resources:
           IpProtocol: "-1"
           FromPort: 0
           ToPort: 0
-      VpcId: 
+      VpcId:
         Fn::ImportValue:
           !Join [':', [!Ref 'StackName', 'VPC']]
 
@@ -199,7 +199,7 @@ Resources:
       Subnets:
         - Fn::ImportValue: !Join [':', [!Ref 'StackName', 'PublicSubnet1']]
         - Fn::ImportValue: !Join [':', [!Ref 'StackName', 'PublicSubnet2']]
-      SecurityGroups: 
+      SecurityGroups:
         - !Ref LBSecurityGroup
 
   TargetGroup:
@@ -208,7 +208,7 @@ Resources:
       Name: !Join ['-', [!Ref environment, "target", "group"]]
       Port: !Ref ContainerPort
       Protocol: HTTP
-      VpcId:  
+      VpcId:
         Fn::ImportValue:
           !Join [':', [!Ref 'StackName', 'VPC']]
       TargetType: ip
@@ -254,7 +254,7 @@ Resources:
                   - "ecs:UpdateService"
                 Resource: "*"
 
-  ECSAutoscalingTarget:  
+  ECSAutoscalingTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
       RoleARN: !GetAtt ECSAutoscalingRole.Arn
@@ -266,13 +266,13 @@ Resources:
 
   ECSscaleUp:
     Type : "AWS::ApplicationAutoScaling::ScalingPolicy"
-    Properties: 
+    Properties:
       PolicyName: !Join [ "-", [ !Ref environment, "ecs","scale","up"]]
       PolicyType: StepScaling
       ResourceId: !Join [ "/", [ "service", !Ref ECSCluster, !GetAtt Service.Name]]
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: ecs
-      StepScalingPolicyConfiguration: 
+      StepScalingPolicyConfiguration:
         AdjustmentType: "ChangeInCapacity"
         Cooldown: 60
         MetricAggregationType: "Average"
@@ -284,18 +284,18 @@ Resources:
 
   ECSscaleDown:
     Type : "AWS::ApplicationAutoScaling::ScalingPolicy"
-    Properties: 
+    Properties:
       PolicyName: !Join [ "-", [ !Ref environment, "ecs","scale","down"]]
       PolicyType: StepScaling
       ResourceId: !Join [ "/", [ "service", !Ref ECSCluster, !GetAtt Service.Name]]
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: ecs
-      StepScalingPolicyConfiguration: 
+      StepScalingPolicyConfiguration:
         AdjustmentType: "ChangeInCapacity"
         Cooldown: 120
         MetricAggregationType: "Average"
         StepAdjustments:
-          - 
+          -
            MetricIntervalLowerBound: 0
            ScalingAdjustment: -1
     DependsOn: ECSAutoscalingTarget
