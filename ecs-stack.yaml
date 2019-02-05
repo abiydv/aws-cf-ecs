@@ -266,13 +266,13 @@ Resources:
 
   ECSscaleUp:
     Type : "AWS::ApplicationAutoScaling::ScalingPolicy"
-    Properties: 
+    Properties:
       PolicyName: !Join [ "-", [ !Ref environment, "ecs","scale","up"]]
       PolicyType: StepScaling
       ResourceId: !Join [ "/", [ "service", !Ref ECSCluster, !GetAtt Service.Name]]
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: ecs
-      StepScalingPolicyConfiguration: 
+      StepScalingPolicyConfiguration:
         AdjustmentType: "ChangeInCapacity"
         Cooldown: 60
         MetricAggregationType: "Average"
@@ -284,18 +284,18 @@ Resources:
 
   ECSscaleDown:
     Type : "AWS::ApplicationAutoScaling::ScalingPolicy"
-    Properties: 
+    Properties:
       PolicyName: !Join [ "-", [ !Ref environment, "ecs","scale","down"]]
       PolicyType: StepScaling
       ResourceId: !Join [ "/", [ "service", !Ref ECSCluster, !GetAtt Service.Name]]
       ScalableDimension: "ecs:service:DesiredCount"
       ServiceNamespace: ecs
-      StepScalingPolicyConfiguration: 
+      StepScalingPolicyConfiguration:
         AdjustmentType: "ChangeInCapacity"
         Cooldown: 120
         MetricAggregationType: "Average"
         StepAdjustments:
-          - 
+          -
            MetricIntervalLowerBound: 0
            ScalingAdjustment: -1
     DependsOn: ECSAutoscalingTarget
