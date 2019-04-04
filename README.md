@@ -17,6 +17,10 @@ Use this template to create a ECS (Fargate backed) cluster with load balancer, I
 Create the VPC using [vpc-stack]() template. This template reads the exported values from the vpc-stack. 
 It launches the load balancer in public subnets and ECS Containers in the private subnets.
 
+## Architecture
+A simplified view of the architecture is as follows - 
+![arch](https://github.com/abiydv/ref-docs/blob/master/images/arch/ARCH_GH.png)
+
 ## How to use
 Checkout the repository and execute from cli. Remember to select the correct profile
 ```
